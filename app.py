@@ -148,10 +148,11 @@ def build_output(hash_original, hash_arquivo):
 
 
 app_ui = ui.page_fluid(
-    ui.h1("UrnaHash", style='text-align: center'),
-    ui.h2("Aplicativo para comparação dos hashes gerados pelas Urnas Eletrônicas", style='text-align: center'),
-    ui.HTML("""
-    <h4 onclick='(function(){const lista = document.getElementById("guia");
+    ui.tags.header(
+        ui.h1("UrnaHash", style='text-align: center'),
+        ui.h2("Aplicativo para comparação dos hashes gerados pelas Urnas Eletrônicas", style='text-align: center'),
+        ui.HTML("""
+                <h4 onclick='(function(){const lista = document.getElementById("guia");
                                         if (lista.style.display=="block") {
                                             lista.style.display="none";
                                             } else {
@@ -170,9 +171,11 @@ app_ui = ui.page_fluid(
                 <p> Quando os <i>hashes</i> do arquivo de assinaturas e dos demais arquivos são compatíveis, o resultado é apresentado em <span style="color: green">verde</span>; caso contrário, em <span style="color: red">vermelho</span>.</p>
                 <p><strong> <i>Hashes</i> são como impressões digitais de arquivos, se os <i>hashes</i> dos arquivos de Boletim de Urna e Log de Urna
                 são iguais aos do registrado no arquivo de assinaturas da urna, ambos só podem ser provenientes daquele urna específica.</strong></p>"""),
-    ui.tags.p(ui.tags.a("MANUAL DE USO DETALHADO", href="manual.html")),
-    ui.HTML("<p><strong>Aviso legal</strong>: Essa ferramenta não tem qualquer vinculação com o TSE ou partidos políticos e deve ser empregada apenas para fins educacionais.</p>"),
-    ui.tags.hr(),
+        ui.tags.p(ui.tags.a("MANUAL DE USO DETALHADO", href="manual.html")),
+        ui.HTML("<p><strong>Aviso legal</strong>: Essa ferramenta não tem qualquer vinculação com o TSE ou partidos políticos e deve ser empregada apenas para fins educacionais.</p>"),
+        ui.tags.hr(),
+    ),
+    
     ui.layout_sidebar(
         ui.panel_sidebar(
             ui.input_file("fileSign", "Escolha um arquivo ZIP com assinaturas da UE (.zip)", accept=".zip", button_label='Escolher...', placeholder='Nenhum arquivo selecionado'),
