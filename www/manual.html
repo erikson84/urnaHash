@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual UrnaHash</title>
+    <style>
+        html {
+            max-width: 60%;
+            margin-left: 20%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-justify: distribute-all-lines;
+        }
+        img {
+            max-width: 70%;
+            height: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Manual UrnaHash</h1>
+    <p align="right">Erikson K.</p>
+    <h3>Apresentação</h3>
+    <p>A Urna Eletrônica (UE) utilizada para as eleições no Brasil gera uma série de arquivos ao fim do processo eleitoral, que são enviados ao TSE para apuração.
+        Os principais arquivos são:
+    </p>
+    <ul>
+        <li>Boletim de Urna - BU</li>
+        <li>Registro Digital de Voto - RDV</li>
+        <li>Log de Urna</li>
+        <li>Assinatura dos arquivos de Urna</li>
+    </ul>
+    <p>
+        Recentemente, a possibilidade de vinculação dos resultados apresentados no BU ao Log de Urna foi questionado em função de problemas no Log de Urna de modelos anteriores a 2020. Um determinado
+        relatório afirma que, se o Log de Urna não apresentar corretamente o código de identificação interno da UE, é impossível vincular os resultados do BU ao que de fato ocorreu
+        no processo eleitoral, tal como registrado no Log.
+    </p>
+    <p>
+        <strong>Essa afirmação é falsa.</strong> Isso porque todos os arquivos gerados pela UE são assinados ao fim do processo eleitoral e são gerados <i>hashes</i> para cada um deles.
+    <p>
+        Um <i>hash</i> é uma função que mapeia uma entrada de tamanho variável (como um arquivo binário) para uma saída de tamanho fixo, gerando um código único que funciona como
+        uma <strong>impressão digital</strong> de cada arquivo.
+    </p>
+    <p>
+        O arquivo não pode ser alterado sem alterar seu <i>hash</i> e, por isso, se um arquivo de Log de Urna e um arquivo
+        de Boletim de Urna possuem <i>hashes</i> idênticos ao registrado no arquivo de assinaturas da urna, podemos ter certeza que ambos foram gerados pela mesma UE.
+    </p>
+    <p>
+        O aplicativo <bold>UrnaHash</bold> facilita a comparação dos <i>hashes</i> presentes no arquivo de assinaturas gerados pela UE e disponibilizados publicamente
+        pelo TSE em seu site de Dados Abertos e nos resultados das eleições 2022: <a href="https://resultados.tse.jus.br/">https://resultados.tse.jus.br/</a>.
+    </p>
+    <p>
+        Todos os script foram desenvolvidos com auxílio da documentação técnica disponibilizada pelo TSE: <a href="https://www.tse.jus.br/eleicoes/eleicoes-2022/documentacao-tecnica-do-software-da-urna-eletronica">https://www.tse.jus.br/eleicoes/eleicoes-2022/documentacao-tecnica-do-software-da-urna-eletronica</a>.
+    </p>
+    <h3>Modo de Usar</h3>
+    <p>
+        Para utilizar o aplicativo, é necessário primeiro recuperar os Dados de Urna disponíveis no site do TSE (<a href="https://resultados.tse.jus.br/">https://resultados.tse.jus.br/</a>).
+
+    </p>
+    <ol>
+        <li>Acessar o site do TSE com os resultados das Eleições 2022 (<a href="https://resultados.tse.jus.br/">https://resultados.tse.jus.br/</a>)</li>
+        <li>Clicar em "Dados de Urna", confrome figura abaixo</li>
+    </ol>
+    <img src="./img/img1.png" alt="Primeira tela: dados de urna">
+    <ol start="3">
+        <li>Escolher a localização da urna de interesse</li>
+    </ol>
+    <img src="./img/img2.png" alt="Segunda tela: localização">
+    <ol start="4">
+        <li>Escolher o Estado</li>
+    </ol>
+    <img src="./img/img3.png" alt="Terceira tela: Estado">
+    <ol start="5">
+        <li>Escolher o Município</li>
+    </ol>
+    <img src="./img/img4.png" alt="Quarta tela: Município">
+    <ol start="6">
+        <li>Identificar a Zona Eleitoral (Número 1, na imagem abaixo)</li>
+        <li>Identificar a Seção Eleitoral (Número 2, na imagem abaixo)</li>
+        <li>Clicar em "Pesquisar" (Número 3, na imagem abaixo)</li>
+    </ol>
+    <img src="./img/img5.png" alt="Quinta tela: Zona e Seção">
+    <ol start="9">
+        <li>Baixar o arquivo do Boletim de Urna (*.bu) pelo botão "Baixar arquivo BU" (Número 1, na imagem abaixo) (pode ser necessário clicar com o botão direito e escolher "Salvar link como...")</li>
+        <li>Mudar a aba para "Log de Urna" (Número 2, na imagem abaixo)</li>
+    </ol>
+    <img src="./img/img6.png" alt="Sexta tela: Baixar arquivo BU">
+    <ol start="11">
+        <li>Baixar o arquivo do Log de Urna compactado (*.zip) pelo botão "Baixar o arquivo *.zip" (Número 1, na imagem abaixo)</li>
+        <li>Baixar o arquivo compactado (*.zip) contendo as assinaturas dos arquivos de urna pelo botão "Todos os Arquivos" (Número 2, na imagem abaixo)</li>
+    </ol>
+    <img src="./img/img7.png" alt="Sétima tela: Baixar arquivo de Log e de Assinatura">
+
+    <ol start="13">
+        <li>Entrar no aplicativo UrnaHash</li>
+        <li>Carregar o arquivo compactado (*.zip) contendo as assinaturas dos arquivos de urna (Número 1, na imagem abaixo)</li>
+        <li>Carregar o arquivo compactado (*.zip) contendo o Log de Urna (Número 2, na imagem abaixo)<li>
+        <li>Carregar o arquivo de Boletim de Urna (*.bu) (Número 3, na imagem abaixo)</li>
+    </ol>
+    <img src="./img/img8.png" alt="Oitava tela: carregar os arquivos do TSE no app UrnaHash">
+    <ol start="17">
+        <li>O <i>hash</i> registrado no arquivo de assinaturas da urna e do Log de Urna são apresentados acima</li>
+        <li>O <i>hash</i> registrado no arquivo de assinaturas da urna e do Boletim de Urna são apresentados abaixo</li>
+        <ul>
+            <li>Quando os <i>hashes</i> são iguais, eles são apresentados na cor verde</li>
+            <li>Quando os <i>hashes</i> são diferentes, eles são apresentados na cor vermelha</li>
+        </ul>   
+    </ol>
+    <img src="./img/img9.png" alt="Nona tela: resultados da comparação dos hashes">
+
+    <p>
+        E é isso. Se os arquivos foram corretamente carregados do site do TSE, eles devem sempre resultar no mesmo hash e, portanto, aparecem na cor verde.
+    </p>
+    <p>
+        Experimente carregar arquivos de outras urnas para se certificar que, de fato, não é possívle encontrar o mesmo hash se o arquivo é de fato proveniente de outra urna.
+    </p>
+
+
+</body>
+</html>
