@@ -148,10 +148,79 @@ def build_output(hash_original, hash_arquivo):
 
 
 app_ui = ui.page_fluid(
+    ui.tags.head(
+        ui.tags.title("urnaHash"),
+        ui.tags.style(ui.HTML(
+            """
+            html {
+                margin-left: 10%;
+                margin-right: 10%;
+                background: #0f172a;
+                padding: 0;
+                word-wrap: break-word;
+            }
+
+            .container-fluid {
+                display: flex;
+                flex-direction: column;
+                padding: 0;
+            }
+
+            h1, h2, h3, h4 {
+                margin: 0;
+                padding: 0;
+            }
+
+            #titles {
+                background: #5b21b6;
+                padding: 20px;
+                color: #eff6ff;
+                border-radius: 40px 40px 0 0;
+            }
+
+            header {
+                background: #0f172a;
+            }
+
+            #exp {
+                background: #0284c7;
+                color: #eff6ff;
+                padding: 40px 40px 10px 40px;
+                border-radius: 40px 40px 0 0;
+            }
+            #expBack {
+                background: #5b21b6;
+            }
+            a {
+                color: #312e81;
+            }
+
+            #mainDiv {
+                background: #0284c7;
+
+            }
+
+            main {
+                border-radius: 40px 40px 0 0;
+                background: white;
+                padding: 40px;
+            }
+            p {
+                margin-top: 0.5rem;
+                margin-bottom: 0.5rem;
+            }
+            """
+        ))
+    ),
     ui.tags.header(
-        ui.h1("UrnaHash", style='text-align: center'),
-        ui.h2("Aplicativo para comparação dos hashes gerados pelas Urnas Eletrônicas", style='text-align: center'),
-        ui.HTML("""
+        ui.tags.div(
+            ui.h1("UrnaHash", style='text-align: center'),
+            ui.h2("Aplicativo para comparação dos hashes gerados pelas Urnas Eletrônicas", style='text-align: center'),
+            id="titles",
+        ),
+        ui.tags.div(
+            ui.tags.div(
+                ui.HTML("""
                 <h4 onclick='(function(){const lista = document.getElementById("guia");
                                         if (lista.style.display=="block") {
                                             lista.style.display="none";
@@ -171,22 +240,27 @@ app_ui = ui.page_fluid(
                 <p> Quando os <i>hashes</i> do arquivo de assinaturas e dos demais arquivos são compatíveis, o resultado é apresentado em <span style="color: green">verde</span>; caso contrário, em <span style="color: red">vermelho</span>.</p>
                 <p><strong> <i>Hashes</i> são como impressões digitais de arquivos, se os <i>hashes</i> dos arquivos de Boletim de Urna e Log de Urna
                 são iguais aos do registrado no arquivo de assinaturas da urna, ambos só podem ser provenientes daquele urna específica.</strong></p>"""),
-        ui.tags.p(ui.tags.a("MANUAL DE USO DETALHADO", href="manual.html")),
-        ui.HTML("<p><strong>Aviso legal</strong>: Essa ferramenta não tem qualquer vinculação com o TSE ou partidos políticos e deve ser empregada apenas para fins educacionais.</p>"),
-        ui.tags.hr(),
+            ui.tags.p(ui.tags.a("MANUAL DE USO DETALHADO", href="manual.html")),
+            ui.HTML("<p><strong>Aviso legal</strong>: Essa ferramenta não tem qualquer vinculação com o TSE ou partidos políticos e deve ser empregada apenas para fins educacionais.</p>"),
+            id="exp"),
+            
+        id="expBack"),
     ),
-    
-    ui.layout_sidebar(
+    ui.tags.div(
+        ui.tags.main(
+        ui.layout_sidebar(
         ui.panel_sidebar(
             ui.input_file("fileSign", "Escolha um arquivo ZIP com assinaturas da UE (.zip)", accept=".zip", button_label='Escolher...', placeholder='Nenhum arquivo selecionado'),
             ui.input_file("fileLog", "Escolha um arquivo ZIP com Log de Urna (.zip)", accept='.zip', button_label='Escolher...', placeholder='Nenhum arquivo selecionado'),
             ui.input_file("fileBU", "Escolha um arquivo de Boletim de Urna (.bu)", accept='.bu', button_label='Escolher...', placeholder='Nenhum arquivo selecionado'),
-            width=3,
-        ),
+            width=4,
+            ),
         ui.panel_main(
             ui.output_ui("contents"),
+                ),
+            ),
         ),
-    ),
+    id="mainDiv"),
 )
 
 
