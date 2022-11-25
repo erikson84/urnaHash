@@ -4,6 +4,7 @@ import asn1tools
 import binascii
 import hashlib
 import zipfile
+import asyncio
 
 ASSINATURA = """
 ModuloAssinaturaResultado DEFINITIONS IMPLICIT TAGS ::= BEGIN
@@ -267,7 +268,7 @@ app_ui = ui.page_fluid(
 def server(input, output, session):
     @output
     @render.ui
-    def contents():
+    async def contents():
         if input.fileBU() is None or input.fileSign() is None or input.fileLog() is None:
             return "Por favor, escolha um arquivo de assinaturas, de log de urna e de boletim de urna."
         bu: list[types.FileInfo] = input.fileBU()
@@ -290,6 +291,8 @@ def server(input, output, session):
 
         with open(bu[0]['datapath'], 'rb') as file:
             currentBU = hashFile(file.read())
+        
+        await asyncio.sleep(1)
 
         return ui.HTML("<h3>Hashes do Log de Urna</h3>" +
             build_output(originalLog, currentLog) + 
