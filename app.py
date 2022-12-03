@@ -1121,7 +1121,7 @@ END
 x509_conv = asn1tools.compile_string(X509, codec="der")
 
 
-def hashFile(file):
+def hash_file(file):
     sha = hashlib.sha512()
     sha.update(file)
     digest = sha.digest()
@@ -1137,7 +1137,6 @@ def decode_envelope(assinatura):
 
 
 def decode_assinaturas(entidade_assinatura):
-    entidade_assinatura = decode_envelope(assinatura)
     assinaturas_encoded = entidade_assinatura["conteudoAutoAssinado"]
     assinaturas_decoded = conv.decode("Assinatura", assinaturas_encoded)
     return assinaturas_decoded
@@ -1171,13 +1170,12 @@ def extract_pubkey(entidade_assinatura):
         curve = Curve.get_curve('Ed521')
     else:
         "ERRO Algoritmo de encriptação"
-
     pubkey = ECPublicKey(curve.decode_point(pubkey))
-    return pubkey
+    return {"pubkey": pubkey, "signer": signer, "cn": cn}
 
 
 def extract_hash_signature(assinaturas_decoded, arquivo, sign):
-    assert (sign in {'hash', 'assinatura'})
+    assert sign in {'hash', 'assinatura'}
     if arquivo == "log":
         resumo = assinaturas_decoded['arquivosAssinados'][10]['assinatura'][sign]
     elif arquivo == "bu":
@@ -1187,8 +1185,13 @@ def extract_hash_signature(assinaturas_decoded, arquivo, sign):
     return resumo
 
 
-def build_output(hash_original, hash_arquivo):
-    if hash_original == hash_arquivo:
+def check_signature(hash_arquivo, assinatura_original, pub_key):
+    pubkey, signer, _ = pub_key.values()
+    return signer.verify(hash_arquivo, assinatura_original, pubkey)
+
+
+def build_output(checked: bool, hash_original, hash_arquivo) -> str:
+    if checked:
         color = "green"
     else:
         color = "red"
@@ -1340,24 +1343,30 @@ def server(input, output, session):
                 if f.endswith(".vscmr"):
                     with zip.open(f, 'r') as file:
                         fil = file.read()
-                        originalLog = extract_hash(fil, "log")
-                        originalBU = extract_hash(fil, "bu")
+                        originalLogHash = extract_hash_signature(
+                            fil, "log", "hash")
+                        originalBUHash = extract_hash_signature(
+                            fil, "bu", "hash")
+                        originalLogSign = extract_hash_signature(
+                            fil, "log", "assinatura")
+                        originalBUSign = extract_hash_signature(
+                            fil, "bu", "assinatura")
 
         with zipfile.ZipFile(log[0]['datapath'], mode='r') as zip:
             for f in zip.namelist():
                 if f.endswith(".logjez"):
                     with zip.open(f, 'r') as file:
-                        currentLog = hashFile(file.read())
+                        currentLog = hash_file(file.read())
 
         with open(bu[0]['datapath'], 'rb') as file:
-            currentBU = hashFile(file.read())
+            currentBU = hash_file(file.read())
 
         await asyncio.sleep(1)
 
         return ui.HTML("<h3>Hashes do Log de Urna</h3>" +
-                       build_output(originalLog, currentLog) +
+                       build_output(originalLogHash, currentLog) +
                        "<h3>Hashes do Boletim de Urna</h3>" +
-                       build_output(originalBU, currentBU)
+                       build_output(originalBUHash, currentBU)
                        )
 
 
