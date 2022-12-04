@@ -1190,7 +1190,7 @@ def check_signature(hash_arquivo, assinatura_original, pub_key):
     return signer.verify(hash_arquivo, assinatura_original, pubkey)
 
 
-def build_output(checked: bool, hash_original, hash_arquivo) -> str:
+def build_output(checked, hash_original, hash_arquivo):
     if checked:
         color = "green"
     else:
@@ -1217,12 +1217,19 @@ app_ui = ui.page_fluid(
                 background: #0f172a;
                 padding: 0;
                 word-wrap: break-word;
+                height: 100%;
+            }
+
+            body {
+                height: 100%;
+
             }
 
             .container-fluid {
                 display: flex;
                 flex-direction: column;
                 padding: 0;
+                min-height: 100%
             }
 
             h1, h2, h3, h4 {
@@ -1296,8 +1303,8 @@ app_ui = ui.page_fluid(
                 <li>Verificar se os <i>hashes</i> são iguais (em verde) ou diferem (em vermelho)</li>
                 <li>Opcional: teste o mesmo arquivo de assinaturas com Boletins de Urna e Log de Urna de outras seções para verificar o que acontece</li>
                 </ol>
-                <p> Este aplicativo compara os <i>hashes</i> do arquivo de assinaturas gerado pelas urnas eletrônicas com o arquivo de Boletim de Urna e Log de Urna disponibilizados pelo TSE.</p>
-                <p> Quando os <i>hashes</i> do arquivo de assinaturas e dos demais arquivos são compatíveis, o resultado é apresentado em <span style="color: green">verde</span>; caso contrário, em <span style="color: red">vermelho</span>.</p>
+                <p> Este aplicativo compara as assinaturas digitais dos <i>hashes</i> dos arquivos gerados pelas urnas eletrônicas com o arquivo de Boletim de Urna e Log de Urna disponibilizados pelo TSE.</p>
+                <p> Quando as assinaturas dos <i>hashes</i> e dos demais arquivos são compatíveis, o resultado é apresentado em <span style="color: green">verde</span>; caso contrário, em <span style="color: red">vermelho</span>.</p>
                 <p><strong> <i>Hashes</i> são como impressões digitais de arquivos, se os <i>hashes</i> dos arquivos de Boletim de Urna e Log de Urna
                 são iguais aos do registrado no arquivo de assinaturas da urna, ambos só podem ser provenientes daquele urna específica.</strong></p>"""),
                 ui.tags.p(
@@ -1343,14 +1350,17 @@ def server(input, output, session):
                 if f.endswith(".vscmr"):
                     with zip.open(f, 'r') as file:
                         fil = file.read()
+                        envelope = decode_envelope(fil)
+                        env_assinatura = decode_assinaturas(envelope)
                         originalLogHash = extract_hash_signature(
-                            fil, "log", "hash")
+                            env_assinatura, "log", "hash")
                         originalBUHash = extract_hash_signature(
-                            fil, "bu", "hash")
+                            env_assinatura, "bu", "hash")
                         originalLogSign = extract_hash_signature(
-                            fil, "log", "assinatura")
+                            env_assinatura, "log", "assinatura")
                         originalBUSign = extract_hash_signature(
-                            fil, "bu", "assinatura")
+                            env_assinatura, "bu", "assinatura")
+                        pub_key = extract_pubkey(envelope)
 
         with zipfile.ZipFile(log[0]['datapath'], mode='r') as zip:
             for f in zip.namelist():
@@ -1362,11 +1372,16 @@ def server(input, output, session):
             currentBU = hash_file(file.read())
 
         await asyncio.sleep(1)
-
-        return ui.HTML("<h3>Hashes do Log de Urna</h3>" +
-                       build_output(originalLogHash, currentLog) +
+        check_log = check_signature(hashlib.sha512(
+            currentLog).digest(), originalLogSign, pub_key)
+        check_bu = check_signature(hashlib.sha512(
+            currentBU).digest(), originalBUSign, pub_key)
+        return ui.HTML("<h3>Identificação da UE no Certificado Digital</h3>" +
+                       "<h4>" + pub_key["cn"][4:] + "</h4><br>" +
+                       "<h3>Hashes do Log de Urna</h3>" +
+                       build_output(check_log, originalLogHash, currentLog) +
                        "<h3>Hashes do Boletim de Urna</h3>" +
-                       build_output(originalBUHash, currentBU)
+                       build_output(check_bu, originalBUHash, currentBU)
                        )
 
 
