@@ -1275,6 +1275,17 @@ app_ui = ui.page_fluid(
                 margin-top: 0.5rem;
                 margin-bottom: 0.5rem;
             }
+
+            footer {
+                display: flex;
+                justify-content: center;
+                padding: 5px;
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+
+            #github {
+                height: 50px;
+            }
             """
         ))
     ),
@@ -1332,6 +1343,10 @@ app_ui = ui.page_fluid(
             ),
         ),
         id="mainDiv"),
+    ui.tags.footer(
+        ui.tags.a(ui.tags.img(src='./img/github.png', id='github'),
+                  href="https://github.com/erikson84/urnaHash")
+    )
 )
 
 
