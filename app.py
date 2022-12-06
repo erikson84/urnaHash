@@ -1217,19 +1217,22 @@ app_ui = ui.page_fluid(
                 background: #0f172a;
                 padding: 0;
                 word-wrap: break-word;
-                height: 100%;
             }
 
             body {
-                height: 100%;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: stretch;
 
             }
 
             .container-fluid {
+                flex: 1 1 auto;
                 display: flex;
                 flex-direction: column;
                 padding: 0;
-                min-height: 100%
+                background-color: black;
             }
 
             h1, h2, h3, h4 {
@@ -1238,6 +1241,7 @@ app_ui = ui.page_fluid(
             }
 
             #titles {
+                flex: 1 1 auto;
                 background: #5b21b6;
                 padding: 20px;
                 color: #eff6ff;
@@ -1245,16 +1249,23 @@ app_ui = ui.page_fluid(
             }
 
             header {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
                 background: #0f172a;
             }
 
             #exp {
+                flex: 1 1 auto;
                 background: #0284c7;
                 color: #eff6ff;
                 padding: 40px 40px 10px 40px;
                 border-radius: 40px 40px 0 0;
             }
             #expBack {
+                flex: 3 1 auto;
+                display: flex;
+                flex-direction: column;
                 background: #5b21b6;
             }
             a {
@@ -1262,11 +1273,15 @@ app_ui = ui.page_fluid(
             }
 
             #mainDiv {
+                flex: 1 1 auto;
+                display: flex;
+                flex-direction: column;
                 background: #0284c7;
 
             }
 
             main {
+                flex: 1;
                 border-radius: 40px 40px 0 0;
                 background: white;
                 padding: 40px;
@@ -1281,6 +1296,7 @@ app_ui = ui.page_fluid(
                 justify-content: center;
                 padding: 5px;
                 background-color: rgba(255, 255, 255, 0.3);
+                height: 60px;
             }
 
             #github {
